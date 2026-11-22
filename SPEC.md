@@ -1,6 +1,6 @@
 # Workout Logger
 
-## Acceptance criteria
+Acceptance criteria
 
 1. The app opens on Workout History. If there are no entries, it says “No workouts before.”
 2. Tapping Add Exercise opens the Log Exercise screen. The form asks for the exercise name, weight in pounds, and number of sets.
