@@ -1,0 +1,33 @@
+I’m new to Expo. Can you check whether Node.js and npm are installed and explain what each one is used for?
+
+Run npx create-expo-app@latest to set up my workout logger. Use the default template and tell me which Expo SDK version it picked.
+
+Expo Go on my iPhone says “Welcome to Expo.” How do I know I opened my local project, and what are the “Try editing,” “Dev tools,” and “Fresh start” options?
+
+Change the welcome message so I can see it update on my phone. How does Fast Refresh get the change from my Mac to Expo Go?
+
+How does Expo Router turn src/app/index.tsx into the first screen? What does _layout.tsx do when I go from Workout History to Log Exercise?
+
+What’s the difference between View and Text in React Native and div and p on a website? Why does the app use a SafeAreaView?
+
+Read the acceptance criteria I wrote in SPEC.md. Tell me if there’s anything a tester would have to guess, especially what counts as valid input and where a workout appears after saving.
+
+Build the workout logger from SPEC.md using Expo SDK 58. Keep it to two screens. Use Expo Router for navigation and AsyncStorage for local history. Run lint and TypeScript checks before committing the raw build.
+
+Why is the weight stored as a string while I type? Show me where the app converts it to a number and explain how it accepts 0 pounds without also accepting a blank field.
+
+What does useState do in the Log Exercise screen? Walk me through what changes when I type an exercise name, tap Save, and get a validation message.
+
+Why does the Workout History screen use FlatList? Where does the list get its data, and how does a newly saved entry appear at the top?
+
+Walk me through what happens when I tap Save. What stays in memory, what gets written to AsyncStorage, and what happens if the write fails?
+
+When I fully close Expo Go and reopen the app, what code loads my history? Why does the screen show a loading indicator before it decides whether to say “No workouts before”?
+
+Review the raw build in a fresh chat against every numbered criterion in SPEC.md. Mark each finding [PASS], [FAIL], or [WARN], give file and line references, and say what you could verify from the code and what needs an iPhone test. Save your findings as REVIEW.md without editing the app.
+
+The review says an old save can close a new form. Show me the sequence of taps that can cause that, then fix it so the save can finish without taking me away from the new form.
+
+Give me a short checklist I can follow on my iPhone to verify empty history, blank fields, zero sets, zero-pound exercises, newest-first ordering, and data still being there after closing and reopening Expo Go.
+
+Check the setup instructions in my README against package.json. Make sure the Expo SDK version, commands, and iPhone testing instructions match the project.
