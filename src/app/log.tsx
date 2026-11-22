@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import { useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,6 +7,7 @@ import { colors, styles } from '@/workouts/styles';
 import { useWorkouts } from '@/workouts/storage';
 
 export default function LogScreen() {
+  const navigation = useNavigation();
   const { history, save } = useWorkouts();
   const [name, setName] = useState('');
   const [weight, setWeight] = useState('');
@@ -45,11 +46,12 @@ export default function LogScreen() {
     setError('');
     try {
       await save({ name: exerciseName, weight: pounds, sets: setCount, date });
-      router.dismissTo('/');
+      if (navigation.isFocused()) router.dismissTo('/');
     } catch {
+      setError('Could not save your exercise. Try again.');
+    } finally {
       submitting.current = false;
       setSaving(false);
-      setError('Could not save your exercise. Try again.');
     }
   }
 
