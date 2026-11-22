@@ -1,18 +1,22 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { colors } from '@/workouts/styles';
+import { WorkoutProvider } from '@/workouts/storage';
 
-SplashScreen.preventAutoHideAsync();
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function Layout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <WorkoutProvider>
+      <StatusBar style="light" />
+      <Stack screenOptions={{
+        headerStyle: { backgroundColor: colors.background },
+        headerTintColor: colors.text,
+        headerShadowVisible: false,
+        contentStyle: { backgroundColor: colors.background },
+      }}>
+        <Stack.Screen name="index" options={{ title: 'Workout History' }} />
+        <Stack.Screen name="log" options={{ title: 'Log Exercise' }} />
+      </Stack>
+    </WorkoutProvider>
   );
 }

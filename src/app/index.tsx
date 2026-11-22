@@ -1,98 +1,63 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { Link } from 'expo-router';
+import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { colors, styles } from '@/workouts/styles';
+import { useWorkouts } from '@/workouts/storage';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
+function displayDate(date: string) {
+  const [year, month, day] = date.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString(undefined, {
+    month: 'short', day: 'numeric', year: 'numeric',
+  });
 }
 
-export default function HomeScreen() {
+export default function HistoryScreen() {
+  const { history, reload } = useWorkouts();
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+    <SafeAreaView edges={['left', 'right', 'bottom']} style={styles.screen}>
+      {history.status === 'ready' ? (
+        <FlatList
+          contentContainerStyle={styles.content}
+          data={history.entries}
+          keyExtractor={(entry) => entry.id}
+          ListHeaderComponent={(
+            <Link href="/log" asChild>
+              <Pressable accessibilityRole="button" style={styles.button}>
+                <Text style={styles.buttonLabel}>Add Exercise</Text>
+              </Pressable>
+            </Link>
+          )}
+          ListEmptyComponent={(
+            <View style={styles.card}>
+              <Text style={styles.text}>No workouts before.</Text>
+            </View>
+          )}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Text style={styles.muted}>{displayDate(item.date)}</Text>
+              <Text style={[styles.text, { fontWeight: '700' }]}>{item.name}</Text>
+              <Text style={styles.muted}>
+                {item.weight} lb · {item.sets} {item.sets === 1 ? 'set' : 'sets'}
+              </Text>
+            </View>
+          )}
+        />
+      ) : (
+        <View style={styles.content}>
+          {history.status === 'loading' ? (
+            <ActivityIndicator accessibilityLabel="Loading workout history" color={colors.accent} />
+          ) : (
+            <>
+              <Text style={styles.error}>Workout history could not be loaded.</Text>
+              <Pressable accessibilityRole="button" onPress={reload} style={styles.button}>
+                <Text style={styles.buttonLabel}>Try Again</Text>
+              </Pressable>
+            </>
+          )}
+        </View>
+      )}
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
-});
